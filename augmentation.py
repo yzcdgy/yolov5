@@ -10,8 +10,8 @@ img_save_path = "C:\\Users\\Yz\\Desktop\\199\\EEE 199 DATASET\\augment images"
 label_save_path = "C:\\Users\\Yz\\Desktop\\199\\EEE 199 DATASET\\augment labels"
 final_label = []
 transform = A.Compose([
-    A.RandomSizedCrop(min_max_height=[360,540], height=720, width=1280)
-], bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
+    A.RandomSizedCrop(min_max_height=[360,576], height=720, width=1280, w2h_ratio=1.77)
+], bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels'], min_visibility=0.2))
 
 for filename in os.listdir(label_dir):
     if (filename.endswith(".txt")) and len(open(os.path.join(label_dir, filename), 'r').readlines()) != 1:
@@ -27,7 +27,7 @@ for filename in os.listdir(label_dir):
             label_class[x] = label_class[x][0]
         for y in range(len(label_coords)):
             label_coords[y] = label_coords[y][1:]
-        transformed = transform(image=image, bboxes=label_coords, class_labels=label_class, min_area=50000)
+        transformed = transform(image=image, bboxes=label_coords, class_labels=label_class)
 
         new_image = cv2.cvtColor(transformed['image'], cv2.COLOR_RGB2BGR)
         cv2.imwrite(os.path.join(img_save_path, 'aug' + filename.replace('txt', 'JPG')), new_image)
